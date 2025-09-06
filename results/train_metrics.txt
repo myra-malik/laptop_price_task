@@ -1,0 +1,4 @@
+Regression Metrics:
+Mean Squared Error (MSE): XX.XX
+Root Mean Squared Error (RMSE): XX.XX
+R-squared (R²) Score: X.XX
