@@ -7,8 +7,6 @@ x_train_encoded, x_test_encoded, y_train, y_test, feature_columns = load_and_pre
     seed=36
 )
 
-# src/train_model.py  — minimal ridge retrain (no extra files)
-
 import pickle
 import numpy as np
 import pandas as pd
@@ -27,12 +25,12 @@ df = pd.read_csv(data_path)
 y = df["Price"].to_numpy(dtype=float).ravel()
 X = df.drop(columns=["Price"])
 
-# one-hot encode (this defines the training columns)
+# one-hot encode 
 X_enc = pd.get_dummies(X, drop_first=True).apply(pd.to_numeric, errors="coerce").fillna(0.0)
 feature_columns = list(X_enc.columns)
 X_np = X_enc.to_numpy(dtype=float)
 
-# simple split (80/20, fixed)
+# 80-20 split 
 rng = np.random.default_rng(42)
 idx = rng.permutation(len(X_np))
 cut = int(0.8 * len(X_np))
@@ -43,12 +41,12 @@ Xtr, Xte, ytr, yte = X_np[tr], X_np[te], y[tr], y[te]
 Xtr_b = np.c_[np.ones((Xtr.shape[0], 1)), Xtr]
 Xte_b = np.c_[np.ones((Xte.shape[0], 1)), Xte]
 
-# ridge fit: w = (X'X + λI)^(-1) X'y  (no penalty on bias)
+# ridge fit
 lam = 0.1
 I = np.eye(Xtr_b.shape[1]); I[0,0] = 0
 w = np.linalg.pinv(Xtr_b.T @ Xtr_b + lam * I) @ (Xtr_b.T @ ytr)
 
-# predict + metrics
+# predict n metrics
 yhat = Xte_b @ w
 err = yte - yhat
 mse  = float((err**2).mean())
@@ -56,17 +54,17 @@ rmse = float(np.sqrt(mse))
 r2   = 1.0 - float(np.sum(err**2)) / float(np.sum((yte - yte.mean())**2))
 print("Ridge λ=0.1  MSE:", round(mse,2), "RMSE:", round(rmse,2), "R²:", round(r2,2))
 
-# save ONE final model, embedding the training columns inside
+# save one model
 with open(os.path.join(models_dir, "regression_model_final.pkl"), "wb") as f:
     pickle.dump({
         "weights": w,
         "has_bias": True,
         "model": "ridge",
         "lambda": lam,
-        "feature_columns": feature_columns  # <-- embedded here
+        "feature_columns": feature_columns  
     }, f)
 
-# write results (from the test split above)
+# write results 
 with open(os.path.join(results_dir, "train_predictions.csv"), "w") as f:
     for v in yhat:
         f.write(f"{float(v):.2f}\n")

@@ -1,5 +1,3 @@
-# src/predict.py — ultra simple, uses columns stored inside the model
-
 import os, pickle
 import numpy as np
 import pandas as pd
@@ -7,10 +5,10 @@ import pandas as pd
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 model_path      = os.path.join(ROOT, "models", "regression_model_final.pkl")
 data_path       = os.path.join(ROOT, "data", "train_data.csv")
-metrics_path    = os.path.join(ROOT, "results", "test_metrics.txt")
+metrics_path    = os.path.join(ROOT, "results", "train_metrics.txt")
 predictions_path= os.path.join(ROOT, "results", "train_predictions.csv")
 
-# load model (weights + feature_columns live together)
+# load model 
 with open(model_path, "rb") as f:
     model = pickle.load(f)
 w = model["weights"]
@@ -22,7 +20,7 @@ has_y = "Price" in df.columns
 y = df["Price"].to_numpy(dtype=float).ravel() if has_y else None
 X = df.drop(columns=["Price"]) if has_y else df
 
-# one-hot encode, then align EXACTLY to training columns
+# one-hot encode and aligning
 X_enc = pd.get_dummies(X, drop_first=True).apply(pd.to_numeric, errors="coerce").fillna(0.0)
 X_enc = X_enc.reindex(columns=train_cols, fill_value=0.0)
 
@@ -45,6 +43,6 @@ if has_y:
         f.write(f"Root Mean Squared Error (RMSE): {rmse:.2f}\n")
         f.write(f"R-squared (R²) Score: {r2:.2f}\n")
 
-print("Predictions ->", predictions_path)
+print("Predictions can be found in:", predictions_path)
 if has_y:
-    print("Metrics ->", metrics_path)
+    print("Metrics can be found in:", metrics_path)

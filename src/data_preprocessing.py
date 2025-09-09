@@ -1,5 +1,3 @@
-# data_preprocessing.py — based on your notebook steps (student style)
-
 import pandas as pd
 import numpy as np
 
@@ -7,7 +5,7 @@ def load_and_preprocess(csv_path, test_size=0.2, seed=36):
     # load
     df = pd.read_csv(csv_path).copy()
 
-    # BASIC NUMBER CLEANING remove letters
+    # NUMBER CLEANING remove letters
     df["Ram"] = df["Ram"].astype(str).str.replace("GB", "", regex=False).astype(int)
 
     # weight cleaning
