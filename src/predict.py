@@ -7,7 +7,7 @@ import pandas as pd
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 model_path      = os.path.join(ROOT, "models", "regression_model_final.pkl")
 data_path       = os.path.join(ROOT, "data", "train_data.csv")
-metrics_path    = os.path.join(ROOT, "results", "train_metrics.txt")
+metrics_path    = os.path.join(ROOT, "results", "test_metrics.txt")
 predictions_path= os.path.join(ROOT, "results", "train_predictions.csv")
 
 # load model (weights + feature_columns live together)
